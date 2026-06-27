@@ -468,13 +468,18 @@ namespace Signalizer
 						// false readings), but stay low enough that the kick's loud transient click does
 						// not hide the quieter body cycles.
 						const float floor = std::max(1e-4f, peak * 0.01f);
+						const float hysteresis = peak * 0.15f;   // signal must swing this far negative before the next rising crossing counts (rejects noise/harmonic re-crossings near zero that would otherwise read as half cycles)
 						const double sr = state.sampleRate;
 						cpl::ssize_t lastCross = -1;
+						bool armed = false;
 
 						for (cpl::ssize_t i = 1; i < N && cycleMarks.size() < 4096; ++i)
 						{
-							// rising zero crossing
-							if (wave[static_cast<std::size_t>(i - 1)] <= 0.0f && wave[static_cast<std::size_t>(i)] > 0.0f)
+							if (wave[static_cast<std::size_t>(i - 1)] < -hysteresis)
+								armed = true;
+
+							// rising zero crossing, counted only after a full negative swing
+							if (armed && wave[static_cast<std::size_t>(i - 1)] <= 0.0f && wave[static_cast<std::size_t>(i)] > 0.0f)
 							{
 								if (lastCross >= 0)
 								{
@@ -492,6 +497,7 @@ namespace Signalizer
 									}
 								}
 								lastCross = i;
+								armed = false;
 							}
 						}
 					}
