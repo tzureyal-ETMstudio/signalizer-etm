@@ -1,0 +1,71 @@
+name: mac
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/mac.yml'
+
+jobs:
+  mac:
+    runs-on: macos-13
+    steps:
+      - name: Checkout (recursive)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Fetch SDKs
+        run: |
+          set -euxo pipefail
+          # VST2 SDK (project references ~/SDKs/vstsdk2.4)
+          git clone --depth 1 https://github.com/R-Tur/VST_SDK_2.4.git "$HOME/SDKs/vstsdk2.4"
+          # VST3 SDK (project references ../../../SDKs/vstsdk3, i.e. one level above the repo)
+          git clone --depth 1 --branch vstsdk368_08_11_2017_build_121 --recurse-submodules --shallow-submodules \
+            https://github.com/steinbergmedia/vst3sdk.git "$GITHUB_WORKSPACE/../SDKs/vstsdk3"
+          ls -la "$GITHUB_WORKSPACE/../SDKs/vstsdk3" | head
+
+      - name: List schemes/targets
+        run: |
+          cd Builds/MacOSX
+          xcodebuild -list -project Signalizer.xcodeproj || true
+
+      - name: Build VST3
+        run: |
+          set -uxo pipefail
+          cd Builds/MacOSX
+          xcodebuild \
+            -project Signalizer.xcodeproj \
+            -scheme Signalizer \
+            -configuration Release \
+            CONFIGURATION_BUILD_DIR="$GITHUB_WORKSPACE/build_out" \
+            MACOSX_DEPLOYMENT_TARGET=10.13 \
+            ARCHS=x86_64 ONLY_ACTIVE_ARCH=NO \
+            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO \
+            2>&1 | tee "$GITHUB_WORKSPACE/build.log" | tail -n 80
+          echo "xcodebuild exit: ${PIPESTATUS[0]}"
+
+      - name: Show build output
+        if: always()
+        run: |
+          echo "=== build_out ==="
+          ls -laR "$GITHUB_WORKSPACE/build_out" 2>/dev/null || echo "no build_out"
+          echo "=== last errors ==="
+          grep -nE "error:|fatal error" "$GITHUB_WORKSPACE/build.log" | tail -n 40 || true
+
+      - name: Upload VST3 artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Signalizer-macOS-VST3
+          path: |
+            ${{ github.workspace }}/build_out/*.vst3
+          if-no-files-found: warn
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac-build-log
+          path: ${{ github.workspace }}/build.log
+          if-no-files-found: warn
