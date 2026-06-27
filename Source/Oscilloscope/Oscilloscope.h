@@ -200,6 +200,11 @@
 				double frequency;      // measured frequency in hertz
 			};
 			std::vector<CycleMark> cycleMarks;
+			/// <summary>
+			/// Fractional sample-space offset that maps a cycle sample index to the same screen
+			/// position the waveform is drawn at (mirrors drawWavePlot's offset/sampleDisplacement).
+			/// </summary>
+			double cycleWaveOffset = 0.0;
 
 			struct StreamState
 			{

@@ -248,49 +248,62 @@ namespace Signalizer
 
 			auto sampleToX = [&](double s) -> double
 			{
-				return ((s / sizeMinusOne) - left) / horizontalSpan * (width - 1);
+				return ((s / sizeMinusOne) + cycleWaveOffset - left) / horizontalSpan * width;
 			};
 
 			const juce::Colour labelColour = juce::Colours::yellow;
+			const double sr = state.sampleRate;
 
-			// 1) a clear tick on the centre line at every detected cycle boundary, so each cycle is visible
-			g.setColour(labelColour.withAlpha(0.9f));
+			// 1) faint short tick at every cycle boundary so all cycles stay subtly visible
+			g.setColour(labelColour.withAlpha(0.28f));
 			for (const auto& mark : cycleMarks)
 			{
 				const double x = sampleToX(mark.startSample);
 				if (x < 0.0 || x > width)
 					continue;
-				g.drawLine(static_cast<float>(x), centerY - 11.0f, static_cast<float>(x), centerY + 11.0f, 2.4f);
+				g.drawLine(static_cast<float>(x), centerY - 6.0f, static_cast<float>(x), centerY + 6.0f, 1.0f);
 			}
 
-			// 2) frequency labels for a readable subset, each connected to its own cycle
+			// 2) for a readable subset, highlight the exact measured cycle as a band + label above it,
+			//    so it is unambiguous which frequency belongs to which cycle
 			g.setFont(juce::Font(juce::Font::getDefaultMonospacedFontName(), cpl::TextSize::normalText, juce::Font::bold));
 			const float leftMargin = 44.0f;      // leave room for the dB scale on the left
-			const float minSpacing = 62.0f;      // keep labels readable but reasonably dense
-			float lastX = -10000.0f;
+			const float minSpacing = 72.0f;      // keep highlighted cycles well apart so labels stay readable
+			float lastCenter = -10000.0f;
 
 			for (const auto& mark : cycleMarks)
 			{
-				const double xc = sampleToX(mark.centerSample);
-				if (xc < leftMargin || xc > width - 6.0)
-					continue;
-				if (xc - lastX < minSpacing)
-					continue;
-				lastX = xc;
+				const double periodSamples = sr / std::max(1.0, mark.frequency);
+				const double xs = sampleToX(mark.startSample);
+				const double xe = sampleToX(mark.startSample + periodSamples);
+				const double xCenter = (xs + xe) * 0.5;
 
-				const float x = static_cast<float>(xc);
+				if (xCenter < leftMargin || xCenter > width - 6.0)
+					continue;
+
+				const float bandX = static_cast<float>(std::min(xs, xe));
+				const float bandW = static_cast<float>(std::max(4.0, std::abs(xe - xs)));
+
+				// label every cycle wide enough to hold a label (so zooming in reveals them all);
+				// when cycles are narrow, keep spacing so labels do not overlap
+				if (bandW < 60.0f && xCenter - lastCenter < minSpacing)
+					continue;
+				lastCenter = xCenter;
+
+				// translucent band covering exactly this cycle, with brighter edges
+				g.setColour(labelColour.withAlpha(0.16f));
+				g.fillRect(bandX, 0.0f, bandW, static_cast<float>(height));
+				g.setColour(labelColour.withAlpha(0.55f));
+				g.drawLine(bandX, 0.0f, bandX, static_cast<float>(height), 1.0f);
+				g.drawLine(bandX + bandW, 0.0f, bandX + bandW, static_cast<float>(height), 1.0f);
 
 				char note[24], label[48];
 				Signalizer::frequencyToNoteName(mark.frequency, note, sizeof(note));
 				cpl::sprintfs(label, "%.1f Hz\n%s", mark.frequency, note);
 
-				// connector from the label down to this cycle's centre on the wave
-				g.setColour(labelColour.withAlpha(0.7f));
-				g.drawLine(x, 34.0f, x, centerY, 1.8f);
-
-				// bright yellow text on a dark rounded background, single row at the top
-				juce::Rectangle<int> r(static_cast<int>(x) - 34, 4, 68, 30);
-				g.setColour(juce::Colours::black.withAlpha(0.65f));
+				// label centred above the band, on a dark rounded background
+				juce::Rectangle<int> r(static_cast<int>(xCenter) - 34, 4, 68, 30);
+				g.setColour(juce::Colours::black.withAlpha(0.7f));
 				g.fillRoundedRectangle(r.toFloat(), 3.0f);
 				g.setColour(labelColour);
 				g.drawFittedText(label, r, juce::Justification::centred, 2);
@@ -390,13 +403,52 @@ namespace Signalizer
 				cycleMarks.clear();
 				if (state.sampleRate > 0)
 				{
-					const cpl::ssize_t N = std::max<cpl::ssize_t>(2, static_cast<cpl::ssize_t>(std::ceil(state.effectiveWindowSize)));
+					// Replicate drawWavePlot's exact sample offset so cycle marks align with the drawn
+					// waveform in every trigger mode and at any zoom.
+					const double sizeMinusOne = std::max(1.0, state.effectiveWindowSize - 1);
+					const double sampleDisplacement = 1.0 / sizeMinusOne;
+					const cpl::ssize_t roundedWindow = std::max<cpl::ssize_t>(2, static_cast<cpl::ssize_t>(std::ceil(state.effectiveWindowSize)));
+					const double horizontalDelta = std::max(1e-9, state.viewOffsets[VO::Right] - state.viewOffsets[VO::Left]);
+					const auto pixelsPerSample = oglc->getRenderingScale() * std::abs((getWidth() - 1) / (sizeMinusOne * horizontalDelta));
 
-					cpl::ssize_t cycleBufferOffset;
+					auto interpolation = state.sampleInterpolation;
+					if (pixelsPerSample < 1 && state.sampleInterpolation != SubSampleInterpolation::None)
+						interpolation = SubSampleInterpolation::Linear;
+
+					cpl::ssize_t quantizedCycleSamples = 0;
+					cpl::ssize_t cycleBufferOffset = 0;
+					double subSampleOffset = 0, offset = 0;
+
 					if (state.triggerMode == OscilloscopeContent::TriggeringMode::Window)
-						cycleBufferOffset = static_cast<cpl::ssize_t>(std::ceil(std::fmod(streamState.transportPosition, state.effectiveWindowSize)));
+					{
+						const auto realOffset = std::fmod(streamState.transportPosition, state.effectiveWindowSize);
+						cycleBufferOffset = static_cast<cpl::ssize_t>(std::ceil(realOffset));
+						offset = subSampleOffset = 0;
+					}
+					else if (state.triggerMode == OscilloscopeContent::TriggeringMode::EnvelopeHold || state.triggerMode == OscilloscopeContent::TriggeringMode::ZeroCrossing)
+					{
+						const auto realOffset = triggerState.sampleOffset;
+						cycleBufferOffset = static_cast<cpl::ssize_t>(std::ceil(realOffset));
+						subSampleOffset = cycleBufferOffset - realOffset;
+						offset += (1 - subSampleOffset) / sizeMinusOne;
+					}
 					else
-						cycleBufferOffset = N;
+					{
+						const auto cycleBuffers = interpolation == SubSampleInterpolation::Lanczos ? 2 : 1;
+						if (state.triggerMode != OscilloscopeContent::TriggeringMode::None)
+						{
+							quantizedCycleSamples = static_cast<cpl::ssize_t>(std::ceil(triggerState.cycleSamples));
+							subSampleOffset = cycleBuffers * (quantizedCycleSamples - triggerState.cycleSamples) + (roundedWindow - state.effectiveWindowSize);
+							offset = -triggerState.sampleOffset / sizeMinusOne;
+						}
+						cycleBufferOffset = roundedWindow + cycleBuffers * quantizedCycleSamples;
+						offset += (1 - subSampleOffset) / sizeMinusOne;
+					}
+
+					// store the mapping offset so paint2DGraphics places marks where the wave is drawn
+					cycleWaveOffset = offset - sampleDisplacement;
+
+					const cpl::ssize_t N = roundedWindow + quantizedCycleSamples;
 
 					DynamicChannelEvaluator cycleEval({ channelData, 0 });
 					if (cycleEval.isWellDefined())

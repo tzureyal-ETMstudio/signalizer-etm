@@ -127,7 +127,7 @@ namespace Signalizer
 		, unFocused(true)
 		, idleInBack(false)
 		, isEditorVisible(false)
-		, selTab(0)
+		, selTab(1) // default to the Oscilloscope tab (0=Vectorscope, 1=Oscilloscope, 2=Spectrum)
 		, currentView(nullptr)
 		, kioskCoords(-1, -1)
 		, firstKioskMode(false)
