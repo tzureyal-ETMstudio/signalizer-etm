@@ -251,7 +251,8 @@ namespace Signalizer
 				return ((s / sizeMinusOne) + cycleWaveOffset - left) / horizontalSpan * width;
 			};
 
-			const juce::Colour labelColour = juce::Colours::yellow;
+			// use the user-editable "Widget colour" so the frequency labels and cycle lines can be recoloured
+			const juce::Colour labelColour = state.colourWidget;
 			const double sr = state.sampleRate;
 
 			// 1) faint short tick at every cycle boundary so all cycles stay subtly visible
