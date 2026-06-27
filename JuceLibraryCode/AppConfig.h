@@ -219,10 +219,13 @@
 // Audio plugin settings..
 
 #ifndef  JucePlugin_Build_VST
- #define JucePlugin_Build_VST              1
+ #define JucePlugin_Build_VST              0
 #endif
 #ifndef  JucePlugin_Build_VST3
- #define JucePlugin_Build_VST3             0
+ #define JucePlugin_Build_VST3             1
+#endif
+#ifndef  JUCE_VST3_CAN_REPLACE_VST2
+ #define JUCE_VST3_CAN_REPLACE_VST2        0
 #endif
 #ifndef  JucePlugin_Build_AU
  #define JucePlugin_Build_AU               1

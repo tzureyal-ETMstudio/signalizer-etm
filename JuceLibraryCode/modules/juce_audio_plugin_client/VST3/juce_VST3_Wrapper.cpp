@@ -574,10 +574,10 @@ public:
             if (pluginInstance->getPlayHead() == this)
                 pluginInstance->setPlayHead (nullptr);
 
-        audioInputs.removeAll();
-        audioOutputs.removeAll();
-        eventInputs.removeAll();
-        eventOutputs.removeAll();
+        audioInputs.clear();
+        audioOutputs.clear();
+        eventInputs.clear();
+        eventOutputs.clear();
     }
 
     //==============================================================================
@@ -691,7 +691,7 @@ public:
     Steinberg::int32 PLUGIN_API getBusCount (Vst::MediaType type, Vst::BusDirection dir) override
     {
         if (Vst::BusList* const busList = getBusListFor (type, dir))
-            return busList->total();
+            return (Steinberg::int32) busList->size();
 
         return 0;
     }
@@ -1336,7 +1336,7 @@ private:
     //==============================================================================
     void addBusTo (Vst::BusList& busList, Vst::Bus* newBus)
     {
-        busList.append (IPtr<Vst::Bus> (newBus, false));
+        busList.push_back (IPtr<Vst::Bus> (newBus, false));
     }
 
     void addAudioBusTo (Vst::BusList& busList, const juce::String& name, Vst::SpeakerArrangement arr)
@@ -1368,7 +1368,7 @@ private:
         Vst::BusInfo info;
         info.channelCount = 0;
 
-        if (Vst::Bus* bus = busList.first())
+        if (Vst::Bus* bus = (busList.empty() ? nullptr : busList[0].get()))
             bus->getInfo (info);
 
         return (int) info.channelCount;
@@ -1647,7 +1647,7 @@ public:
     {
         *obj = nullptr;
 
-        FUID sourceFuid = sourceIid;
+        FUID sourceFuid = FUID::fromTUID (sourceIid);
 
         if (cid == nullptr || sourceIid == nullptr || ! sourceFuid.isValid())
         {

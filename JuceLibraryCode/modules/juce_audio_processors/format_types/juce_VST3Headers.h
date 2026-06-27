@@ -78,17 +78,20 @@
  #include <public.sdk/source/common/memorystream.h>
 #else
  #include <base/source/baseiids.cpp>
- #include <base/source/fatomic.cpp>
+ // fatomic.cpp removed in newer VST3 SDK (atomics are now inline in the header)
  #include <base/source/fbuffer.cpp>
  #include <base/source/fdebug.cpp>
  #include <base/source/fobject.cpp>
- #include <base/source/frect.cpp>
+ // frect.cpp removed in newer VST3 SDK (FRect class dropped)
  #include <base/source/fstreamer.cpp>
  #include <base/source/fstring.cpp>
- #include <base/source/fthread.cpp>
+ // fthread.cpp was replaced by flock/fcondition in the newer VST3 SDK
+ #include <base/thread/source/flock.cpp>
  #include <base/source/updatehandler.cpp>
  #include <pluginterfaces/base/conststringtable.cpp>
  #include <pluginterfaces/base/funknown.cpp>
+ // coreiids.cpp now provides FUnknown/IDependent/IUpdateHandler iids in the newer SDK
+ #include <pluginterfaces/base/coreiids.cpp>
  #include <pluginterfaces/base/ipluginbase.h>
  #include <pluginterfaces/base/ustring.cpp>
  #include <pluginterfaces/gui/iplugview.h>
@@ -109,13 +112,21 @@ namespace Steinberg
     DEF_CLASS_IID (IPluginBase)
     DEF_CLASS_IID (IPlugView)
     DEF_CLASS_IID (IPlugFrame)
-    DEF_CLASS_IID (IBStream)
-    DEF_CLASS_IID (ISizeableStream)
+    // IBStream and ISizeableStream iids are now provided by coreiids.cpp in the newer SDK
     DEF_CLASS_IID (IPluginFactory)
     DEF_CLASS_IID (IPluginFactory2)
     DEF_CLASS_IID (IPluginFactory3)
 }
 #endif //JUCE_VST3HEADERS_INCLUDE_HEADERS_ONLY
+
+// FOREACH_CAST / ENDFOR were removed from the newer VST3 SDK; re-provide them so the
+// (older) JUCE VST3 wrapper still compiles. The list elements are IPtr<Vst::Bus>.
+#ifndef FOREACH_CAST
+ #define FOREACH_CAST(BaseClass, ClassName, obj, list) \
+     for (BaseClass& juce_foreach_##obj : (list)) { \
+         ClassName* obj = (ClassName*) (Steinberg::Vst::Bus*) (juce_foreach_##obj);
+ #define ENDFOR }
+#endif
 
 #if _MSC_VER
  #pragma warning (pop)

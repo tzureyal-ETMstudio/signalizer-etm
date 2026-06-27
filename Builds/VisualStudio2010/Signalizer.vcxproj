@@ -67,16 +67,16 @@
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)..\..\External;$(ProjectDir)..\..\..\SDKs\VST3 SDK;$(ProjectDir)..\..\Source;$(IncludePath);$(ProjectDir)..\..\Source\Config</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\External;$(ProjectDir)..\..\..\SDKs\vst3tmp;$(ProjectDir)..\..\Source;$(IncludePath);$(ProjectDir)..\..\Source\Config</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)..\..\External;$(ProjectDir)..\..\..\SDKs\VST3 SDK;$(ProjectDir)..\..\Source;$(IncludePath);$(ProjectDir)..\..\Source\Config</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\External;$(ProjectDir)..\..\..\SDKs\vst3tmp;$(ProjectDir)..\..\Source;$(IncludePath);$(ProjectDir)..\..\Source\Config</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)..\..\External;$(ProjectDir)..\..\..\SDKs\VST3 SDK;$(ProjectDir)..\..\Source;$(IncludePath);$(ProjectDir)..\..\Source\Config</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\External;$(ProjectDir)..\..\..\SDKs\vst3tmp;$(ProjectDir)..\..\Source;$(IncludePath);$(ProjectDir)..\..\Source\Config</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir)..\..\External;$(ProjectDir)..\..\..\SDKs\VST3 SDK;$(ProjectDir)..\..\Source;$(IncludePath);$(ProjectDir)..\..\Source\Config</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\External;$(ProjectDir)..\..\..\SDKs\vst3tmp;$(ProjectDir)..\..\Source;$(IncludePath);$(ProjectDir)..\..\Source\Config</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
@@ -89,7 +89,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\JuceLibraryCode\modules;c:\SDKs\vstsdk2.4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\JuceLibraryCode\modules;..\..\..\SDKs\vstsdk2.4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;DEBUG;_DEBUG;JUCER_VS2010_78A501D=1;JUCEe_ENABLE_REPAINT_DEBUGGING=1;JUCE_APP_VERSION=0.1.0;JUCE_APP_VERSION_HEX=0x100;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -127,7 +127,7 @@
       <OutputFile>$(IntDir)\Signalizer.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
-      <Command>copy /Y  "$(OutDir)\$(TargetFileName)" "C:\Audio\VstPlugins\x86\Signalizer\$(TargetFileName)"</Command>
+      <Command>exit 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -141,7 +141,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\JuceLibraryCode\modules;c:\SDKs\vstsdk2.4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\JuceLibraryCode\modules;..\..\..\SDKs\vstsdk2.4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;DEBUG;_DEBUG;JUCER_VS2010_78A501D=1;JUCE_APP_VERSION=0.1.0;JUCE_APP_VERSION_HEX=0x100;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -179,7 +179,7 @@
       <OutputFile>$(IntDir)\Signalizer.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
-      <Command>copy /Y  "$(OutDir)\$(TargetFileName)" "C:\Audio\VSTPlugins\Signalizer\$(TargetFileName)"</Command>
+      <Command>exit 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -192,7 +192,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Full</Optimization>
-      <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\JuceLibraryCode\modules;c:\SDKs\vstsdk2.4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\JuceLibraryCode\modules;..\..\..\SDKs\vstsdk2.4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;JUCER_VS2010_78A501D=1;JUCE_APP_VERSION=0.1.0;JUCE_APP_VERSION_HEX=0x100;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -237,7 +237,7 @@
       <OutputFile>$(IntDir)\Signalizer.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
-      <Command>copy /Y  "$(OutDir)\$(TargetFileName)" "C:\Audio\VstPlugins\x86\Signalizer\$(TargetFileName)"</Command>
+      <Command>exit 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -250,7 +250,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Full</Optimization>
-      <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\JuceLibraryCode\modules;c:\SDKs\vstsdk2.4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\JuceLibraryCode;..\..\JuceLibraryCode\modules;..\..\..\SDKs\vstsdk2.4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;JUCER_VS2010_78A501D=1;JUCE_APP_VERSION=0.1.0;JUCE_APP_VERSION_HEX=0x100;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -297,7 +297,7 @@
       <OutputFile>$(IntDir)\Signalizer.bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
-      <Command>copy /Y  "$(OutDir)\$(TargetFileName)" C:\Audio\VstPlugins\Signalizer\$(TargetFileName)"</Command>
+      <Command>exit 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
