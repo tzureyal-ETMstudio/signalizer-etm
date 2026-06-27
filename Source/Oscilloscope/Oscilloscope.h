@@ -189,6 +189,18 @@
 				double sampleOffset;
 			} triggerState{};
 
+			/// <summary>
+			/// One detected wave cycle in the visible window, used to draw frequency
+			/// labels directly on the waveform (no hover needed).
+			/// </summary>
+			struct CycleMark
+			{
+				double startSample;    // left boundary (rising zero crossing) within the visible window
+				double centerSample;   // center position in samples within the visible window
+				double frequency;      // measured frequency in hertz
+			};
+			std::vector<CycleMark> cycleMarks;
+
 			struct StreamState
 			{
 				friend struct AudioDispatcher;

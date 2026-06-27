@@ -36,6 +36,7 @@
 #include <cpl/special/AxisTools.h>
 #include "SampleColourEvaluators.h"
 #include "OscilloscopeDSP.inl"
+#include "FrequencyToNote.h"
 
 namespace Signalizer
 {
@@ -234,6 +235,68 @@ namespace Signalizer
 			g.drawFittedText(text, rectInside, juce::Justification::centredLeft, 6);
 		}
 
+		// --- mark every wave cycle and label their frequencies directly on the wave (no hover) ---
+		if (!cycleMarks.empty() && state.sampleRate > 0)
+		{
+			const auto width = getWidth();
+			const auto height = getHeight();
+			const double sizeMinusOne = std::max(1.0, state.effectiveWindowSize - 1);
+			const double left = state.viewOffsets[VO::Left];
+			const double right = state.viewOffsets[VO::Right];
+			const double horizontalSpan = std::max(1e-9, right - left);
+			const float centerY = static_cast<float>(height) * 0.5f;
+
+			auto sampleToX = [&](double s) -> double
+			{
+				return ((s / sizeMinusOne) - left) / horizontalSpan * (width - 1);
+			};
+
+			const juce::Colour labelColour = juce::Colours::yellow;
+
+			// 1) a clear tick on the centre line at every detected cycle boundary, so each cycle is visible
+			g.setColour(labelColour.withAlpha(0.9f));
+			for (const auto& mark : cycleMarks)
+			{
+				const double x = sampleToX(mark.startSample);
+				if (x < 0.0 || x > width)
+					continue;
+				g.drawLine(static_cast<float>(x), centerY - 11.0f, static_cast<float>(x), centerY + 11.0f, 2.4f);
+			}
+
+			// 2) frequency labels for a readable subset, each connected to its own cycle
+			g.setFont(juce::Font(juce::Font::getDefaultMonospacedFontName(), cpl::TextSize::normalText, juce::Font::bold));
+			const float leftMargin = 44.0f;      // leave room for the dB scale on the left
+			const float minSpacing = 62.0f;      // keep labels readable but reasonably dense
+			float lastX = -10000.0f;
+
+			for (const auto& mark : cycleMarks)
+			{
+				const double xc = sampleToX(mark.centerSample);
+				if (xc < leftMargin || xc > width - 6.0)
+					continue;
+				if (xc - lastX < minSpacing)
+					continue;
+				lastX = xc;
+
+				const float x = static_cast<float>(xc);
+
+				char note[24], label[48];
+				Signalizer::frequencyToNoteName(mark.frequency, note, sizeof(note));
+				cpl::sprintfs(label, "%.1f Hz\n%s", mark.frequency, note);
+
+				// connector from the label down to this cycle's centre on the wave
+				g.setColour(labelColour.withAlpha(0.7f));
+				g.drawLine(x, 34.0f, x, centerY, 1.8f);
+
+				// bright yellow text on a dark rounded background, single row at the top
+				juce::Rectangle<int> r(static_cast<int>(x) - 34, 4, 68, 30);
+				g.setColour(juce::Colours::black.withAlpha(0.65f));
+				g.fillRoundedRectangle(r.toFloat(), 3.0f);
+				g.setColour(labelColour);
+				g.drawFittedText(label, r, juce::Justification::centred, 2);
+			}
+		}
+
 	}
 
 	void Oscilloscope::onOpenGLRendering()
@@ -319,6 +382,66 @@ namespace Signalizer
 						else
 							analyseAndSetupState<ISA, SampleColourEvaluator<OscChannels::Side>>({ channelData, triggerSeparate & ~0x1 }, streamState);
 						break;
+					}
+				}
+
+				// --- detect wave cycles in the visible window and measure each one's frequency ---
+				// Results are stored in cycleMarks and drawn as labels on the wave in paint2DGraphics.
+				cycleMarks.clear();
+				if (state.sampleRate > 0)
+				{
+					const cpl::ssize_t N = std::max<cpl::ssize_t>(2, static_cast<cpl::ssize_t>(std::ceil(state.effectiveWindowSize)));
+
+					cpl::ssize_t cycleBufferOffset;
+					if (state.triggerMode == OscilloscopeContent::TriggeringMode::Window)
+						cycleBufferOffset = static_cast<cpl::ssize_t>(std::ceil(std::fmod(streamState.transportPosition, state.effectiveWindowSize)));
+					else
+						cycleBufferOffset = N;
+
+					DynamicChannelEvaluator cycleEval({ channelData, 0 });
+					if (cycleEval.isWellDefined())
+					{
+						cycleEval.startFrom(-cycleBufferOffset, -cycleBufferOffset);
+
+						std::vector<float> wave(static_cast<std::size_t>(N));
+						float peak = 0.0f;
+						for (cpl::ssize_t i = 0; i < N; ++i)
+						{
+							const float s = static_cast<float>(cycleEval.evaluateSampleInc());
+							wave[static_cast<std::size_t>(i)] = s;
+							peak = std::max(peak, std::abs(s));
+						}
+
+						// amplitude floor: ignore near-silent cycles (so noise in the tail does not create
+						// false readings), but stay low enough that the kick's loud transient click does
+						// not hide the quieter body cycles.
+						const float floor = std::max(1e-4f, peak * 0.01f);
+						const double sr = state.sampleRate;
+						cpl::ssize_t lastCross = -1;
+
+						for (cpl::ssize_t i = 1; i < N && cycleMarks.size() < 4096; ++i)
+						{
+							// rising zero crossing
+							if (wave[static_cast<std::size_t>(i - 1)] <= 0.0f && wave[static_cast<std::size_t>(i)] > 0.0f)
+							{
+								if (lastCross >= 0)
+								{
+									const double period = static_cast<double>(i - lastCross);
+									if (period > 1.0)
+									{
+										// judge each cycle by its own amplitude so loud and quiet cycles are treated fairly
+										float cyclePeak = 0.0f;
+										for (cpl::ssize_t k = lastCross; k < i; ++k)
+											cyclePeak = std::max(cyclePeak, std::abs(wave[static_cast<std::size_t>(k)]));
+
+										const double freq = sr / period;
+										if (cyclePeak >= floor && freq >= 10.0 && freq <= 5000.0)
+											cycleMarks.push_back({ static_cast<double>(lastCross), (static_cast<double>(lastCross) + i) * 0.5, freq });
+									}
+								}
+								lastCross = i;
+							}
+						}
 					}
 				}
 
