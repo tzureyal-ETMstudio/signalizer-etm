@@ -53,6 +53,30 @@ jobs:
           echo "=== last errors ==="
           grep -nE "error:|fatal error" "$GITHUB_WORKSPACE/build.log" | tail -n 40 || true
 
+      - name: Repackage as VST3
+        run: |
+          set -euxo pipefail
+          cd "$GITHUB_WORKSPACE/build_out"
+          # the old project emits an AU .component bundle, but with JucePlugin_Build_VST3=1 the
+          # binary inside exports the VST3 factory. Repackage it as a proper .vst3 bundle.
+          BIN="$(find Signalizer.component/Contents/MacOS -type f | head -n1)"
+          echo "binary: $BIN"
+          # confirm the VST3 entry point is exported
+          if nm -gU "$BIN" | grep -q GetPluginFactory; then
+            echo "OK: GetPluginFactory is exported"
+          else
+            echo "WARNING: GetPluginFactory not found in exported symbols"; nm -gU "$BIN" | grep -i factory || true
+          fi
+          rm -rf Signalizer.vst3
+          mkdir -p Signalizer.vst3/Contents/MacOS
+          cp "$BIN" Signalizer.vst3/Contents/MacOS/Signalizer
+          cp "$GITHUB_WORKSPACE/Builds/MacOSX/vst3_Info.plist" Signalizer.vst3/Contents/Info.plist
+          printf 'BNDL????' > Signalizer.vst3/Contents/PkgInfo
+          if [ -d Signalizer.component/Contents/Resources ]; then
+            cp -R Signalizer.component/Contents/Resources Signalizer.vst3/Contents/Resources
+          fi
+          ls -laR Signalizer.vst3 | head -n 40
+
       - name: Upload VST3 artifact
         if: always()
         uses: actions/upload-artifact@v4
