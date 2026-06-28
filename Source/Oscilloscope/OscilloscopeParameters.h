@@ -366,6 +366,7 @@
 				, degreeRange(0, 360)
 				, ptsRange(0.01, 10)
 				, phaseRange(-180, 180)
+				, latencyRange(-192000, 192000)
 				, reverseUnitRange(1, 0)
 				, customTriggerRange(5, 48000)
 				, colourSmoothRange(0.001, 1000)
@@ -387,6 +388,7 @@
 				, pctForDivision("PctDiv", unityRange, pctFormatter)
 				, channelConfiguration("ChConf")
 				, triggerPhaseOffset("TrgPhase", phaseRange, degreeFormatter)
+				, latencyOffset("LatencyOffset", latencyRange, basicFormatter)
 				, triggerMode("TrgMode")
 				, timeMode("TimeMode")
 				, dotSamples("DotSmps", boolRange, boolFormatter)
@@ -441,6 +443,7 @@
 					&channelConfiguration.param,
 					&pctForDivision,
 					&triggerPhaseOffset,
+					&latencyOffset,
 					&triggerMode.param,
 					&timeMode.param,
 					&dotSamples,
@@ -667,7 +670,8 @@
 				phaseRange,
 				reverseUnitRange,
 				customTriggerRange,
-				triggerThresholdRange;
+				triggerThresholdRange,
+				latencyRange;
 
 			cpl::IntegerLinearRange<double>
 				triggerChannelRange;
@@ -688,6 +692,7 @@
 				primitiveSize,
 				pctForDivision,
 				triggerPhaseOffset,
+				latencyOffset,
 				dotSamples,
 				triggerOnCustomFrequency,
 				customTriggerFrequency,

@@ -1,4 +1,4 @@
-/*
+﻿/*
 
     IMPORTANT! This file is auto-generated each time you save your
     project - if you alter its contents, your changes may be overwritten!
@@ -237,7 +237,7 @@
  #define JucePlugin_Build_AAX              0
 #endif
 #ifndef  JucePlugin_Name
- #define JucePlugin_Name                   "Signalizer"
+ #define JucePlugin_Name                   "ETM Signalizer"
 #endif
 #ifndef  JucePlugin_Desc
  #define JucePlugin_Desc                   "Inspect audio."
@@ -255,7 +255,7 @@
  #define JucePlugin_ManufacturerCode       'LbJt'
 #endif
 #ifndef  JucePlugin_PluginCode
- #define JucePlugin_PluginCode             'Sign'
+ #define JucePlugin_PluginCode             'EtmS'
 #endif
 #ifndef  JucePlugin_MaxNumInputChannels
  #define JucePlugin_MaxNumInputChannels    2
