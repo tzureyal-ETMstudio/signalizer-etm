@@ -309,6 +309,48 @@ namespace Signalizer
 				g.setColour(labelColour);
 				g.drawFittedText(label, r, juce::Justification::centred, 2);
 			}
+
+			// 3) on hover: a small tooltip showing the peak level (dBFS) of the
+			//    cycle directly under the cursor. Kept off until hovered so the
+			//    always-on frequency labels stay uncluttered.
+			if (isMouseInside.load())
+			{
+				const float mx = static_cast<float>(currentMouse.x.load());
+				const float my = static_cast<float>(currentMouse.y.load());
+
+				for (const auto& mark : cycleMarks)
+				{
+					const double periodSamples = sr / std::max(1.0, mark.frequency);
+					const float xa = static_cast<float>(sampleToX(mark.startSample));
+					const float xb = static_cast<float>(sampleToX(mark.startSample + periodSamples));
+					const float bandLo = std::min(xa, xb);
+					const float bandHi = std::max(xa, xb);
+
+					if (mx >= bandLo && mx <= bandHi)
+					{
+						const double db = 20.0 * std::log10(std::max(1e-7, mark.peak));
+						char dbtext[24];
+						if (db <= -120.0)
+							cpl::sprintfs(dbtext, "-inf dB");
+						else
+							cpl::sprintfs(dbtext, "%.1f dB", db);
+
+						g.setFont(juce::Font(juce::Font::getDefaultMonospacedFontName(), cpl::TextSize::normalText, juce::Font::bold));
+						const int tw = 74, th = 20;
+						int tx = static_cast<int>(mx) + 14;
+						int ty = static_cast<int>(my) - th - 6;
+						if (tx + tw > width) tx = static_cast<int>(mx) - tw - 14;
+						if (ty < 0) ty = static_cast<int>(my) + 14;
+
+						juce::Rectangle<int> tr(tx, ty, tw, th);
+						g.setColour(juce::Colours::black.withAlpha(0.78f));
+						g.fillRoundedRectangle(tr.toFloat(), 3.0f);
+						g.setColour(labelColour);
+						g.drawFittedText(dbtext, tr, juce::Justification::centred, 1);
+						break; // only the cycle under the cursor
+					}
+				}
+			}
 		}
 
 	}
@@ -494,7 +536,7 @@ namespace Signalizer
 
 										const double freq = sr / period;
 										if (cyclePeak >= floor && freq >= 10.0 && freq <= 5000.0)
-											cycleMarks.push_back({ static_cast<double>(lastCross), (static_cast<double>(lastCross) + i) * 0.5, freq });
+											cycleMarks.push_back({ static_cast<double>(lastCross), (static_cast<double>(lastCross) + i) * 0.5, freq, static_cast<double>(cyclePeak) });
 									}
 								}
 								lastCross = i;

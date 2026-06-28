@@ -198,6 +198,7 @@
 				double startSample;    // left boundary (rising zero crossing) within the visible window
 				double centerSample;   // center position in samples within the visible window
 				double frequency;      // measured frequency in hertz
+				double peak;           // peak linear amplitude within this cycle (for the hover dB readout)
 			};
 			std::vector<CycleMark> cycleMarks;
 			/// <summary>
