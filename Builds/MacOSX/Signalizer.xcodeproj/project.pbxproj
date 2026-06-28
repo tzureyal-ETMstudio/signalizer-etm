@@ -3148,8 +3148,6 @@
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D7E43AE303CC83D159C3B38E /* juce_AU_Resources.r in Rez */,
-				D9BC72B6234124C059ED3193 /* juce_RTAS_MacResources.r in Rez */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
