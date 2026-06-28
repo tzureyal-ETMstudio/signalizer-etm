@@ -76,6 +76,10 @@ jobs:
           if [ -d Signalizer.component/Contents/Resources ]; then
             cp -R Signalizer.component/Contents/Resources "$BUNDLE/Contents/Resources"
           fi
+          # ad-hoc code signature: no Apple account needed, but prevents the hard
+          # "is damaged / cannot be opened" Gatekeeper block once quarantine is cleared.
+          codesign --force --deep --sign - "$BUNDLE" || echo "codesign failed (non-fatal)"
+          codesign --verify --verbose "$BUNDLE" || true
           ls -laR "$BUNDLE" | head -n 40
 
       - name: Build .pkg installer

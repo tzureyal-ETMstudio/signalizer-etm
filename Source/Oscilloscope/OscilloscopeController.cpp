@@ -62,6 +62,7 @@ namespace Signalizer
 			, kpctForDivision(&parentValue.pctForDivision)
 			, kchannelConfiguration(&parentValue.channelConfiguration.param)
 			, ktriggerPhaseOffset(&parentValue.triggerPhaseOffset)
+			, kLatencyOffset(&parentValue.latencyOffset)
 			, ktriggerMode(&parentValue.triggerMode.param)
 			, ktimeMode(&parentValue.timeMode.param)
 			, kdotSamples(&parentValue.dotSamples)
@@ -153,6 +154,8 @@ namespace Signalizer
 			kchannelConfiguration.bSetTitle("Channel conf.");
 			ktriggerMode.bSetTitle("Trigger mode");
 			ktriggerPhaseOffset.bSetTitle("Trigger phase");
+			kLatencyOffset.bSetTitle("Latency offset");
+			kLatencyOffset.bSetDescription("Shifts the waveform horizontally to compensate for latency from upstream plugins, so it sits in place.");
 			ktimeMode.bSetTitle("Time mode");
 			kcustomFrequency.bSetTitle("Custom trigger");
 			kchannelColouring.bSetTitle("Channel colouring");
@@ -247,6 +250,7 @@ namespace Signalizer
 					section->addControl(&ktimeMode, 1);
 					section->addControl(&ktriggerMode, 0);
 					section->addControl(&ktriggerPhaseOffset, 1);
+					section->addControl(&kLatencyOffset, 0);
 
 					section->addControl(&ktriggerThreshold, 0);
 					section->addControl(&ktriggerHysteresis, 1);
@@ -444,7 +448,7 @@ namespace Signalizer
 		cpl::CValueInputControl kcustomFrequency;
 		cpl::CValueKnobSlider
 			kwindow, kgain, kprimitiveSize, kenvelopeSmooth, kpctForDivision, ktriggerPhaseOffset, kcolourSmoothingTime, kfreqColourBlend,
-			ktriggerHysteresis, ktriggerThreshold, ktriggerChannel;
+			ktriggerHysteresis, ktriggerThreshold, ktriggerChannel, kLatencyOffset;
 		cpl::CColourControl kprimaryColour, ksecondaryColour, kgraphColour, kbackgroundColour, klowColour, kmidColour, khighColour, kwidgetColour;
 		cpl::CTransformWidget ktransform;
 		cpl::CValueComboBox kenvelopeMode, ksubSampleInterpolationMode, kchannelConfiguration, ktriggerMode, ktimeMode, kchannelColouring;
