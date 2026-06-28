@@ -143,7 +143,8 @@ struct ObjCClass
     static id sendSuperclassMessage (id self, SEL selector)
     {
         objc_super s = { self, [SuperclassType class] };
-        return objc_msgSendSuper (&s, selector);
+        // arm64: objc_msgSendSuper must be called through a correctly-typed function pointer
+        return (reinterpret_cast<id (*) (objc_super*, SEL)> (objc_msgSendSuper)) (&s, selector);
     }
 
     template <typename Type>
