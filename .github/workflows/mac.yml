@@ -77,6 +77,19 @@ jobs:
           fi
           ls -laR Signalizer.vst3 | head -n 40
 
+      - name: Build .pkg installer
+        run: |
+          set -euxo pipefail
+          cd "$GITHUB_WORKSPACE/build_out"
+          rm -rf pkg_root && mkdir -p pkg_root
+          cp -R Signalizer.vst3 pkg_root/
+          pkgbuild --root pkg_root \
+            --install-location "/Library/Audio/Plug-Ins/VST3" \
+            --identifier com.etm.signalizer.vst3 \
+            --version 0.4.3 \
+            "Signalizer-macOS-Installer.pkg"
+          ls -la *.pkg
+
       - name: Upload VST3 artifact
         if: always()
         uses: actions/upload-artifact@v4
@@ -84,6 +97,14 @@ jobs:
           name: Signalizer-macOS-VST3
           path: |
             ${{ github.workspace }}/build_out/*.vst3
+          if-no-files-found: warn
+
+      - name: Upload .pkg installer
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Signalizer-macOS-Installer
+          path: ${{ github.workspace }}/build_out/*.pkg
           if-no-files-found: warn
 
       - name: Upload build log
