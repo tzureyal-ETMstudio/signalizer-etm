@@ -422,7 +422,7 @@ namespace Signalizer
 
 					if (state.triggerMode == OscilloscopeContent::TriggeringMode::Window)
 					{
-						const auto realOffset = std::fmod(streamState.transportPosition + content->latencyOffset.getParameterView().getValueTransformed(), state.effectiveWindowSize);
+						const auto realOffset = std::fmod(streamState.transportPosition, state.effectiveWindowSize);
 						cycleBufferOffset = static_cast<cpl::ssize_t>(std::ceil(realOffset));
 						offset = subSampleOffset = 0;
 					}
@@ -769,7 +769,7 @@ namespace Signalizer
 
 			if (triggerMode == OscilloscopeContent::TriggeringMode::Window)
 			{
-				auto const realOffset = std::fmod(cs.transportPosition + content->latencyOffset.getParameterView().getValueTransformed(), state.effectiveWindowSize);
+				auto const realOffset = std::fmod(cs.transportPosition, state.effectiveWindowSize);
 				bufferOffset = static_cast<cpl::ssize_t>(std::ceil(realOffset));
 				offset = subSampleOffset = 0;
 			}
@@ -979,7 +979,7 @@ namespace Signalizer
 
 					if (triggerMode == OscilloscopeContent::TriggeringMode::Window)
 					{
-						samplePos = std::fmod(cs.transportPosition + content->latencyOffset.getParameterView().getValueTransformed(), state.effectiveWindowSize) - 1;
+						samplePos = std::fmod(cs.transportPosition, state.effectiveWindowSize) - 1;
 					}
 					else if (triggerMode == OscilloscopeContent::TriggeringMode::EnvelopeHold || triggerMode == OscilloscopeContent::TriggeringMode::ZeroCrossing)
 					{

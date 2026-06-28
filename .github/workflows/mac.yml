@@ -67,34 +67,35 @@ jobs:
           else
             echo "WARNING: GetPluginFactory not found in exported symbols"; nm -gU "$BIN" | grep -i factory || true
           fi
-          rm -rf Signalizer.vst3
-          mkdir -p Signalizer.vst3/Contents/MacOS
-          cp "$BIN" Signalizer.vst3/Contents/MacOS/Signalizer
-          cp "$GITHUB_WORKSPACE/Builds/MacOSX/vst3_Info.plist" Signalizer.vst3/Contents/Info.plist
-          printf 'BNDL????' > Signalizer.vst3/Contents/PkgInfo
+          BUNDLE="ETM Signalizer.vst3"
+          rm -rf "$BUNDLE"
+          mkdir -p "$BUNDLE/Contents/MacOS"
+          cp "$BIN" "$BUNDLE/Contents/MacOS/Signalizer"
+          cp "$GITHUB_WORKSPACE/Builds/MacOSX/vst3_Info.plist" "$BUNDLE/Contents/Info.plist"
+          printf 'BNDL????' > "$BUNDLE/Contents/PkgInfo"
           if [ -d Signalizer.component/Contents/Resources ]; then
-            cp -R Signalizer.component/Contents/Resources Signalizer.vst3/Contents/Resources
+            cp -R Signalizer.component/Contents/Resources "$BUNDLE/Contents/Resources"
           fi
-          ls -laR Signalizer.vst3 | head -n 40
+          ls -laR "$BUNDLE" | head -n 40
 
       - name: Build .pkg installer
         run: |
           set -euxo pipefail
           cd "$GITHUB_WORKSPACE/build_out"
           rm -rf pkg_root && mkdir -p pkg_root
-          cp -R Signalizer.vst3 pkg_root/
+          cp -R "ETM Signalizer.vst3" pkg_root/
           pkgbuild --root pkg_root \
             --install-location "/Library/Audio/Plug-Ins/VST3" \
             --identifier com.etm.signalizer.vst3 \
             --version 0.4.3 \
-            "Signalizer-macOS-Installer.pkg"
+            "ETM-Signalizer-macOS-Installer.pkg"
           ls -la *.pkg
 
       - name: Upload VST3 artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Signalizer-macOS-VST3
+          name: ETM-Signalizer-macOS-VST3
           path: |
             ${{ github.workspace }}/build_out/*.vst3
           if-no-files-found: warn
@@ -103,7 +104,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Signalizer-macOS-Installer
+          name: ETM-Signalizer-macOS-Installer
           path: ${{ github.workspace }}/build_out/*.pkg
           if-no-files-found: warn
 

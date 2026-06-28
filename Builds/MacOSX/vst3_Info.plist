@@ -5,11 +5,11 @@
 	<key>CFBundleExecutable</key>
 	<string>Signalizer</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.Lightbridge.Signalizer.vst3</string>
+	<string>com.etm.signalizer.vst3</string>
 	<key>CFBundleName</key>
-	<string>Signalizer</string>
+	<string>ETM Signalizer</string>
 	<key>CFBundleDisplayName</key>
-	<string>Signalizer</string>
+	<string>ETM Signalizer</string>
 	<key>CFBundlePackageType</key>
 	<string>BNDL</string>
 	<key>CFBundleShortVersionString</key>
@@ -17,7 +17,7 @@
 	<key>CFBundleVersion</key>
 	<string>0.4.3</string>
 	<key>CFBundleSignature</key>
-	<string>Sign</string>
+	<string>EtmS</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 </dict>
