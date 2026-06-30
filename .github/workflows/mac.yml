@@ -15,22 +15,33 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Fetch SDKs
+      - name: Fetch SDKs (VST2 + VST3)
         run: |
           set -euxo pipefail
-          # VST2 SDK (project references ~/SDKs/vstsdk2.4)
           git clone --depth 1 https://github.com/R-Tur/VST_SDK_2.4.git "$HOME/SDKs/vstsdk2.4"
-          # VST3 SDK (project references ../../../SDKs/vstsdk3, i.e. one level above the repo)
           git clone --depth 1 --branch vstsdk368_08_11_2017_build_121 --recurse-submodules --shallow-submodules \
             https://github.com/steinbergmedia/vst3sdk.git "$GITHUB_WORKSPACE/../SDKs/vstsdk3"
-          ls -la "$GITHUB_WORKSPACE/../SDKs/vstsdk3" | head
+
+      - name: Fetch CoreAudio Utility Classes (AU base classes Apple removed from modern Xcode)
+        run: |
+          set -euxo pipefail
+          git clone --depth 1 https://github.com/g-roma/CoreAudioUtilityClasses.git "$GITHUB_WORKSPACE/../CAUtil"
+          AUDIR="$(find "$GITHUB_WORKSPACE/../CAUtil" -type d -name AudioUnits | head -n1)"
+          CAROOT="$(dirname "$AUDIR")"
+          echo "CoreAudio root: $CAROOT"
+          ls "$CAROOT"
+          # the pbxproj references AU sources at DEVELOPER_DIR/Extras/CoreAudio/AudioUnits/...
+          DEV="$(xcode-select -p)"
+          sudo mkdir -p "$DEV/Extras"
+          sudo ln -sfn "$CAROOT" "$DEV/Extras/CoreAudio"
+          ls -la "$DEV/Extras/CoreAudio"
 
       - name: List schemes/targets
         run: |
           cd Builds/MacOSX
           xcodebuild -list -project Signalizer.xcodeproj || true
 
-      - name: Build VST3
+      - name: Build (AU + VST3)
         run: |
           set -uxo pipefail
           cd Builds/MacOSX
@@ -42,73 +53,57 @@ jobs:
             MACOSX_DEPLOYMENT_TARGET=10.13 \
             ARCHS=x86_64 ONLY_ACTIVE_ARCH=NO \
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO \
-            2>&1 | tee "$GITHUB_WORKSPACE/build.log" | tail -n 80
+            2>&1 | tee "$GITHUB_WORKSPACE/build.log" | tail -n 120
           echo "xcodebuild exit: ${PIPESTATUS[0]}"
 
-      - name: Show build output
+      - name: Show build output + errors
         if: always()
         run: |
           echo "=== build_out ==="
           ls -laR "$GITHUB_WORKSPACE/build_out" 2>/dev/null || echo "no build_out"
-          echo "=== last errors ==="
-          grep -nE "error:|fatal error" "$GITHUB_WORKSPACE/build.log" | tail -n 40 || true
+          echo "=== errors ==="
+          grep -nE "error:|fatal error|cannot find|No such file|not found" "$GITHUB_WORKSPACE/build.log" | tail -n 70 || true
 
-      - name: Repackage as VST3
+      - name: Package AU (.component)
         run: |
           set -euxo pipefail
           cd "$GITHUB_WORKSPACE/build_out"
-          # the old project emits an AU .component bundle, but with JucePlugin_Build_VST3=1 the
-          # binary inside exports the VST3 factory. Repackage it as a proper .vst3 bundle.
           BIN="$(find Signalizer.component/Contents/MacOS -type f | head -n1)"
           echo "binary: $BIN"
-          # confirm the VST3 entry point is exported
-          if nm -gU "$BIN" | grep -q GetPluginFactory; then
-            echo "OK: GetPluginFactory is exported"
-          else
-            echo "WARNING: GetPluginFactory not found in exported symbols"; nm -gU "$BIN" | grep -i factory || true
-          fi
-          BUNDLE="ETM Signalizer.vst3"
-          rm -rf "$BUNDLE"
-          mkdir -p "$BUNDLE/Contents/MacOS"
-          cp "$BIN" "$BUNDLE/Contents/MacOS/Signalizer"
-          cp "$GITHUB_WORKSPACE/Builds/MacOSX/vst3_Info.plist" "$BUNDLE/Contents/Info.plist"
-          printf 'BNDL????' > "$BUNDLE/Contents/PkgInfo"
-          if [ -d Signalizer.component/Contents/Resources ]; then
-            cp -R Signalizer.component/Contents/Resources "$BUNDLE/Contents/Resources"
-          fi
-          # ad-hoc code signature: no Apple account needed, but prevents the hard
-          # "is damaged / cannot be opened" Gatekeeper block once quarantine is cleared.
-          codesign --force --deep --sign - "$BUNDLE" || echo "codesign failed (non-fatal)"
-          codesign --verify --verbose "$BUNDLE" || true
-          ls -laR "$BUNDLE" | head -n 40
+          echo "=== exported entry points ==="
+          nm -gU "$BIN" | grep -iE "AudioComponent|PluginFactory|Entry|Factory" || true
+          COMP="ETM Signalizer.component"
+          rm -rf "$COMP"
+          cp -R Signalizer.component "$COMP"
+          codesign --force --deep --sign - "$COMP" || echo "codesign failed (non-fatal)"
+          ls -laR "$COMP" | head -n 30
 
-      - name: Build .pkg installer
+      - name: Build .pkg installer (AU -> Components)
         run: |
           set -euxo pipefail
           cd "$GITHUB_WORKSPACE/build_out"
           rm -rf pkg_root && mkdir -p pkg_root
-          cp -R "ETM Signalizer.vst3" pkg_root/
+          cp -R "ETM Signalizer.component" pkg_root/
           pkgbuild --root pkg_root \
-            --install-location "/Library/Audio/Plug-Ins/VST3" \
-            --identifier com.etm.signalizer.vst3 \
+            --install-location "/Library/Audio/Plug-Ins/Components" \
+            --identifier com.etm.signalizer.au \
             --version 0.4.3 \
-            "ETM-Signalizer-macOS-Installer.pkg"
+            "ETM-Signalizer-AU-macOS-Installer.pkg"
           ls -la *.pkg
 
-      - name: Upload VST3 artifact
+      - name: Upload AU component
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ETM-Signalizer-macOS-VST3
-          path: |
-            ${{ github.workspace }}/build_out/*.vst3
+          name: ETM-Signalizer-AU
+          path: ${{ github.workspace }}/build_out/*.component
           if-no-files-found: warn
 
-      - name: Upload .pkg installer
+      - name: Upload AU installer
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ETM-Signalizer-macOS-Installer
+          name: ETM-Signalizer-AU-Installer
           path: ${{ github.workspace }}/build_out/*.pkg
           if-no-files-found: warn
 
@@ -116,6 +111,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: mac-build-log
+          name: mac-au-build-log
           path: ${{ github.workspace }}/build.log
           if-no-files-found: warn
