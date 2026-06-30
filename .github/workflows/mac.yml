@@ -96,7 +96,7 @@ jobs:
           # ad-hoc sign both
           codesign --force --deep --sign - "$AU"   || echo "AU codesign failed (non-fatal)"
           codesign --force --deep --sign - "$VST3" || echo "VST3 codesign failed (non-fatal)"
-          ls -laR pkg_root | head -n 40
+          ls -la "pkg_root/Library/Audio/Plug-Ins/Components" "pkg_root/Library/Audio/Plug-Ins/VST3" || true
 
       - name: Build .pkg installer (AU + VST3)
         run: |
