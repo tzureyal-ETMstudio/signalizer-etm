@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0C10E8B43A65DFF9A7453CAB /* CAAudioChannelLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD098D458D93B0A042542497 /* CAAudioChannelLayout.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		0DAD76EC048AA5FA3B633999 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABA13DCD1D115389BB8181C0 /* IOKit.framework */; };
 		0E7781C32FB5B6E02B0E6AC3 /* juce_VST3_Wrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 69B2E8707A043193C1D2A4C2 /* juce_VST3_Wrapper.cpp */; };
 		0FAAB335D814E91FEC26CEDE /* DiscRecording.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0806AE937F395D947FF8D260 /* DiscRecording.framework */; };
@@ -33,44 +34,64 @@
 		16F63B151CA6BBF400816394 /* presets in Resources */ = {isa = PBXBuildFile; fileRef = 16F63B111CA6BBF400816394 /* presets */; };
 		16F63B161CA6BBF400816394 /* READ ME.txt in Resources */ = {isa = PBXBuildFile; fileRef = 16F63B121CA6BBF400816394 /* READ ME.txt */; };
 		16F63B171CA6BBF400816394 /* resources in Resources */ = {isa = PBXBuildFile; fileRef = 16F63B131CA6BBF400816394 /* resources */; };
+		1BDB768996BF39F6D83070A2 /* AUEffectBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3177FDC74A3F3A30961620D6 /* AUEffectBase.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		2BD287D1E7CA9D97721B8161 /* juce_AU_Wrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3A6021B42D210342E83E1FE4 /* juce_AU_Wrapper.mm */; };
 		2ECBB4F4BE0687E74E635383 /* juce_gui_extra.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7642A5577832F6C6CE8191AC /* juce_gui_extra.mm */; };
 		354DC8BE341E3237EA68AEF8 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B2B5B2E2839B6F5BF3F361A /* AudioToolbox.framework */; };
 		3566FECEE25F8C82E7641AFF /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2F755B6BEAE5440E114673B /* QTKit.framework */; };
 		371FC3B823257128D59DAE87 /* juce_PluginUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF07BD6A9D21776240F47F61 /* juce_PluginUtilities.cpp */; };
 		372011347BFB434EE625306B /* juce_AAX_Wrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = C790DA7A5AB1259B9854BB22 /* juce_AAX_Wrapper.mm */; };
+		42F6DBEE1CB36B50CE3C6ADD /* AUScopeElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60D52046F69D453C1B2F8697 /* AUScopeElement.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		44299907F840D6CF916CABF4 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA30D5AE8246138FAF9D0A88 /* Accelerate.framework */; };
+		44587E74A110174500BB87D1 /* AUCarbonViewBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55B4463F9D1956862C7EE4F2 /* AUCarbonViewBase.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		453AF1946E25E7C7401AFEBB /* juce_RTAS_DigiCode3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073AB6D3F70CE9ECACAB07EB /* juce_RTAS_DigiCode3.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
+		4FB580ACE5C4D6308B73052E /* MusicDeviceBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46F227C69AA8BAFCEF987AF0 /* MusicDeviceBase.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		53EB393517095936C0E4D107 /* juce_audio_basics.mm in Sources */ = {isa = PBXBuildFile; fileRef = C645B2E0E6C8C0692E7DCC94 /* juce_audio_basics.mm */; };
 		564D3D06972761A3EEBEB272 /* juce_VST_Wrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 61834B5AD0309509CA1C2AAA /* juce_VST_Wrapper.cpp */; };
 		565B26A1048243C08BFF4D39 /* juce_audio_processors.mm in Sources */ = {isa = PBXBuildFile; fileRef = 153DDF63E3DF4241DB0C4DDB /* juce_audio_processors.mm */; };
+		5A909200236552071A42B964 /* AUOutputElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C1F3EC904F6001A0A716E25E /* AUOutputElement.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		5AAE09CBEDC8036BE15AF2BE /* juce_AAX_Wrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90902E2F4C37046F366037A0 /* juce_AAX_Wrapper.cpp */; };
+		6082277350E7A701D7D0C682 /* AUMIDIEffectBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 767D9F3AD872CFC8E8D9967D /* AUMIDIEffectBase.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		65BEDC90D0076C568CEBDC2A /* juce_audio_devices.mm in Sources */ = {isa = PBXBuildFile; fileRef = B93D48A6901732AC0BE3108E /* juce_audio_devices.mm */; };
+		6BA8F0986D0B3F58441C9358 /* AUDispatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6E7B76C17707350669FD9FB /* AUDispatch.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		71AFB88A89F5508765AE8A9F /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD13E79616F5519F01757023 /* CoreMIDI.framework */; };
 		73CE391D21EA72BD12875A47 /* juce_graphics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07A41130D23125715038F4F7 /* juce_graphics.mm */; };
+		74227C829A4E80D54ED4B30A /* AUInputElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C342722FEF6076A18AFC7B6 /* AUInputElement.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
+		76FDB87A94DFB96D3A2CD24A /* AUOutputBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B7E047E69870D57DF5D7F /* AUOutputBase.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
+		770309DB8C1D3E24E1981923 /* ComponentBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D96A727F20EE41C691EB67A9 /* ComponentBase.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
+		81F08C2B937F3CA8498F7A70 /* AUCarbonViewControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9C425F5A2C2E095EF02FF9 /* AUCarbonViewControl.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		86D76319D1FE736AFEFF1055 /* juce_opengl.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E0D0955E29316191CBABCB8 /* juce_opengl.mm */; };
+		8839786896F72B7FE1273EAE /* CAVectorUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 875B6A72248FFE082B1404E0 /* CAVectorUnit.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
+		887436EA7DEFF722E092CAD6 /* CAAUParameter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E518A4C7663AE0C8654FF7B6 /* CAAUParameter.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		8882BBDBD6FF18F58541E75B /* juce_RTAS_MacUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0A8675B8FD42648A5B653B76 /* juce_RTAS_MacUtilities.mm */; };
+		89EEA8F581017B4287788F69 /* CAMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D23F89448298A735DCC44468 /* CAMutex.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		8BAAAAC90AD017429CFD9A1B /* juce_cryptography.mm in Sources */ = {isa = PBXBuildFile; fileRef = AC8D61CA4785A92AABFD6298 /* juce_cryptography.mm */; };
 		94A3B82EDD8E6365B66E994A /* juce_RTAS_DigiCode2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E40A463163C7E7B5A52C5B4 /* juce_RTAS_DigiCode2.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		9A7A0328B99302F7C7344E84 /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AD617CE60F603AB73BD1CAC /* CoreAudioKit.framework */; };
 		9A921FCEC3D33C974558DD25 /* juce_audio_formats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0AA6CF8243016D20F044F71B /* juce_audio_formats.mm */; };
 		9ADCF957CAC10F2F084FE271 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF3EED0643E301A799F6F76D /* OpenGL.framework */; };
+		9C5936917A9D533D9EAB1E13 /* AUCarbonViewDispatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90F3933D5CB9395207740321 /* AUCarbonViewDispatch.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
+		A30F8D1650A263B575A42DAB /* AUBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2FB1A1E381B374263887679E /* AUBuffer.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		A95A55B77FB78377987D6823 /* juce_core.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA9763EC927487F25FDEC9B4 /* juce_core.mm */; };
 		AA1781F42177A5671DF98229 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA4E6384C2027C7A7989F39E /* Carbon.framework */; };
 		ACC5248B6417628B3A49768F /* juce_RTAS_DigiCode1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 88DFD03D4040B593D85FE5BD /* juce_RTAS_DigiCode1.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		B01450827D33C5B4D3907AAE /* juce_gui_basics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 945681DA9B19C3DF565C41F0 /* juce_gui_basics.mm */; };
 		BA7D51760F34E93A8F8A18AE /* juce_video.mm in Sources */ = {isa = PBXBuildFile; fileRef = A9CCB71D26111056E1809146 /* juce_video.mm */; };
 		C9A73D79BA65A3ED502F30FD /* juce_data_structures.mm in Sources */ = {isa = PBXBuildFile; fileRef = E018AED4B0C04AEF68610022 /* juce_data_structures.mm */; };
+		CA51C6AE4CD7856A2815FDBB /* AUMIDIBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BDA98E860FC62755DA4DC58 /* AUMIDIBase.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		D406F2FB807646E49DAE5672 /* juce_events.mm in Sources */ = {isa = PBXBuildFile; fileRef = F30C1C06D1BF6A551D769AB5 /* juce_events.mm */; };
 		D67D63216F661725CEB58581 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A4274947FD8C786213D82A4 /* QuartzCore.framework */; };
 		D7E43AE303CC83D159C3B38E /* juce_AU_Resources.r in Rez */ = {isa = PBXBuildFile; fileRef = D9728DF0B938186D393F42DB /* juce_AU_Resources.r */; };
 		D9B723921CE9730FA25D94D6 /* juce_VST_Wrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = DFE23EA49DCA31CE8CDB9A0C /* juce_VST_Wrapper.mm */; };
 		D9BC72B6234124C059ED3193 /* juce_RTAS_MacResources.r in Rez */ = {isa = PBXBuildFile; fileRef = 0AE4189CFD040C587E319F70 /* juce_RTAS_MacResources.r */; };
+		D9CA843EC25368BFE6682B74 /* AUBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 06DADD538DD710CB2281BE62 /* AUBase.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
+		DE1C0AE58B9D316AF5582B11 /* CAStreamBasicDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C62D7E3CB80FA125BA208D5 /* CAStreamBasicDescription.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		E0FF53DDCCA849A6F80E1181 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F50A9BAF1BC274F38E6E3661 /* Cocoa.framework */; };
 		E9C5E25BEDFEE19FA797D0F9 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77C57DC9EA99E12A3AC3E335 /* WebKit.framework */; };
 		EB6F70843DB19CD25A1CFE42 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E179D771FF5983B0362BC58E /* AudioUnit.framework */; };
 		EE2AA1609ADB846CBDCFFBAA /* juce_VST3_Wrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = DA67FFE9852591810AABD7C3 /* juce_VST3_Wrapper.mm */; };
 		F0D4F4C4E8DD69DE154F36BC /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9560E766C1C7FB37A1B291D /* CoreAudio.framework */; };
+		F1A0C1B3237415E12906AFAD /* CarbonEventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3B132CE81532F74F80E08294 /* CarbonEventHandler.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		FCA1CB7DC1DED2D9A0852562 /* juce_RTAS_Wrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03FC569C350A011723718052 /* juce_RTAS_Wrapper.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 /* End PBXBuildFile section */
 
@@ -2826,6 +2847,54 @@
 		DD8F0A964035232A5CBE35B8 /* Juce AU Wrapper */ = {
 			isa = PBXGroup;
 			children = (
+				06DADD538DD710CB2281BE62 /* AUBase.cpp */,
+				E5A43F685C79DC25C2CEF543 /* AUBase.h */,
+				2FB1A1E381B374263887679E /* AUBuffer.cpp */,
+				C68A1CB6FB44BAFA961AAE0C /* AUBuffer.h */,
+				55B4463F9D1956862C7EE4F2 /* AUCarbonViewBase.cpp */,
+				F0A768E762EE02D3CA316574 /* AUCarbonViewBase.h */,
+				5D9C425F5A2C2E095EF02FF9 /* AUCarbonViewControl.cpp */,
+				B1A5AF10A3CABAE4F3BBA03B /* AUCarbonViewControl.h */,
+				90F3933D5CB9395207740321 /* AUCarbonViewDispatch.cpp */,
+				F6E7B76C17707350669FD9FB /* AUDispatch.cpp */,
+				D0036588613C6CD0CA7175CB /* AUDispatch.h */,
+				3177FDC74A3F3A30961620D6 /* AUEffectBase.cpp */,
+				6BB0FAEB0508F716432998A9 /* AUEffectBase.h */,
+				6C342722FEF6076A18AFC7B6 /* AUInputElement.cpp */,
+				0122FD03B8A58551D7FBACA0 /* AUInputElement.h */,
+				1552D5C7785DAD629CC67179 /* AUInputFormatConverter.h */,
+				9BDA98E860FC62755DA4DC58 /* AUMIDIBase.cpp */,
+				732030D488D13F178F8D1A3C /* AUMIDIBase.h */,
+				767D9F3AD872CFC8E8D9967D /* AUMIDIEffectBase.cpp */,
+				4269EA2E9EC70FEA0459BB0E /* AUMIDIEffectBase.h */,
+				4B6B7E047E69870D57DF5D7F /* AUOutputBase.cpp */,
+				01FDF11D2B34E3139A3A0778 /* AUOutputBase.h */,
+				C1F3EC904F6001A0A716E25E /* AUOutputElement.cpp */,
+				0B90ADA171DE40ADF1EAC3F1 /* AUOutputElement.h */,
+				1509C0E5FAB8DDD54A0A7E5F /* AUResources.r */,
+				60D52046F69D453C1B2F8697 /* AUScopeElement.cpp */,
+				1C4D6F523A061921F467D618 /* AUScopeElement.h */,
+				4542FA4BC2D0E067E26FD8BB /* AUSilentTimeout.h */,
+				BE38F9CDD856115B41F9026A /* AUTimestampGenerator.h */,
+				BF9089E0D805C459B7B95B64 /* AUViewLocalizedStringKeys.h */,
+				DD098D458D93B0A042542497 /* CAAudioChannelLayout.cpp */,
+				41AFB5693F95E56FC4C73FFD /* CAAudioChannelLayout.h */,
+				E518A4C7663AE0C8654FF7B6 /* CAAUParameter.cpp */,
+				C6242076DA9DB9516BD043F0 /* CAAUParameter.h */,
+				5854A2D7C24D9AD7EB720A65 /* CADebugMacros.h */,
+				D23F89448298A735DCC44468 /* CAMutex.cpp */,
+				6438D7F09B7D5200BFD326F0 /* CAMutex.h */,
+				3B132CE81532F74F80E08294 /* CarbonEventHandler.cpp */,
+				98FD3F525F9011BC656F1EB3 /* CarbonEventHandler.h */,
+				6C62D7E3CB80FA125BA208D5 /* CAStreamBasicDescription.cpp */,
+				A36B17EAC248C96F6F4F4467 /* CAStreamBasicDescription.h */,
+				875B6A72248FFE082B1404E0 /* CAVectorUnit.cpp */,
+				B64E29B5A95F07E32B2E0536 /* CAVectorUnit.h */,
+				CC4A8C434E7BB1DDDA0ED87F /* CAVectorUnitTypes.h */,
+				D96A727F20EE41C691EB67A9 /* ComponentBase.cpp */,
+				D964F1C393FCF5BDAA4F4B1B /* ComponentBase.h */,
+				46F227C69AA8BAFCEF987AF0 /* MusicDeviceBase.cpp */,
+				A0C79348B2984423F334D9F7 /* MusicDeviceBase.h */,
 			);
 			name = "Juce AU Wrapper";
 			sourceTree = "<group>";
@@ -3102,14 +3171,35 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9CA843EC25368BFE6682B74 /* AUBase.cpp in Sources */,
+				A30F8D1650A263B575A42DAB /* AUBuffer.cpp in Sources */,
 				163C01C52AB1F7060066650A /* GraphEditor.cpp in Sources */,
 				160404B51FDC7D0E009EF75C /* VectorscopeController.cpp in Sources */,
+				44587E74A110174500BB87D1 /* AUCarbonViewBase.cpp in Sources */,
+				81F08C2B937F3CA8498F7A70 /* AUCarbonViewControl.cpp in Sources */,
 				16C25EC51F003D3400C3E22C /* Oscilloscope.cpp in Sources */,
+				9C5936917A9D533D9EAB1E13 /* AUCarbonViewDispatch.cpp in Sources */,
+				6BA8F0986D0B3F58441C9358 /* AUDispatch.cpp in Sources */,
+				1BDB768996BF39F6D83070A2 /* AUEffectBase.cpp in Sources */,
 				165278E61A9B36AD003E1953 /* MacSupport.mm in Sources */,
+				74227C829A4E80D54ED4B30A /* AUInputElement.cpp in Sources */,
 				16C25ECA1F003D3400C3E22C /* SpectrumDSP.cpp in Sources */,
+				CA51C6AE4CD7856A2815FDBB /* AUMIDIBase.cpp in Sources */,
+				6082277350E7A701D7D0C682 /* AUMIDIEffectBase.cpp in Sources */,
+				76FDB87A94DFB96D3A2CD24A /* AUOutputBase.cpp in Sources */,
+				5A909200236552071A42B964 /* AUOutputElement.cpp in Sources */,
+				42F6DBEE1CB36B50CE3C6ADD /* AUScopeElement.cpp in Sources */,
+				0C10E8B43A65DFF9A7453CAB /* CAAudioChannelLayout.cpp in Sources */,
+				887436EA7DEFF722E092CAD6 /* CAAUParameter.cpp in Sources */,
+				89EEA8F581017B4287788F69 /* CAMutex.cpp in Sources */,
+				F1A0C1B3237415E12906AFAD /* CarbonEventHandler.cpp in Sources */,
 				166DA6F52B33B86500BDC98F /* CommonSignalizer.cpp in Sources */,
 				16C25ECB1F003D3400C3E22C /* SpectrumRendering.cpp in Sources */,
 				163C01C12AB1F6FB0066650A /* HostGraph.cpp in Sources */,
+				DE1C0AE58B9D316AF5582B11 /* CAStreamBasicDescription.cpp in Sources */,
+				8839786896F72B7FE1273EAE /* CAVectorUnit.cpp in Sources */,
+				770309DB8C1D3E24E1981923 /* ComponentBase.cpp in Sources */,
+				4FB580ACE5C4D6308B73052E /* MusicDeviceBase.cpp in Sources */,
 				5AAE09CBEDC8036BE15AF2BE /* juce_AAX_Wrapper.cpp in Sources */,
 				372011347BFB434EE625306B /* juce_AAX_Wrapper.mm in Sources */,
 				16C25EC71F003D3400C3E22C /* OscilloscopeRendering.cpp in Sources */,
