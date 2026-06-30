@@ -64,46 +64,56 @@ jobs:
           echo "=== errors ==="
           grep -nE "error:|fatal error|cannot find|No such file|not found" "$GITHUB_WORKSPACE/build.log" | tail -n 70 || true
 
-      - name: Package AU (.component)
+      - name: Package both formats (AU .component + VST3 .vst3) into ONE installer
         run: |
           set -euxo pipefail
           cd "$GITHUB_WORKSPACE/build_out"
           BIN="$(find Signalizer.component/Contents/MacOS -type f | head -n1)"
           echo "binary: $BIN"
-          echo "=== exported entry points ==="
+          echo "=== exported entry points (AU factory + VST3 factory expected) ==="
           nm -gU "$BIN" | grep -iE "AudioComponent|PluginFactory|Entry|Factory" || true
-          COMP="ETM Signalizer.component"
-          rm -rf "$COMP"
-          cp -R Signalizer.component "$COMP"
-          codesign --force --deep --sign - "$COMP" || echo "codesign failed (non-fatal)"
-          ls -laR "$COMP" | head -n 30
 
-      - name: Build .pkg installer (AU -> Components)
+          # the one built binary exports BOTH the AU factory and the VST3 factory,
+          # so we ship both formats from it in a single installer.
+          rm -rf pkg_root
+          mkdir -p "pkg_root/Library/Audio/Plug-Ins/Components" "pkg_root/Library/Audio/Plug-Ins/VST3"
+
+          # AU: the .component as built (its Info.plist holds the AudioComponents entry)
+          AU="pkg_root/Library/Audio/Plug-Ins/Components/ETM Signalizer.component"
+          cp -R Signalizer.component "$AU"
+
+          # VST3: repackage the same binary as a .vst3 bundle
+          VST3="pkg_root/Library/Audio/Plug-Ins/VST3/ETM Signalizer.vst3"
+          mkdir -p "$VST3/Contents/MacOS"
+          cp "$BIN" "$VST3/Contents/MacOS/Signalizer"
+          cp "$GITHUB_WORKSPACE/Builds/MacOSX/vst3_Info.plist" "$VST3/Contents/Info.plist"
+          printf 'BNDL????' > "$VST3/Contents/PkgInfo"
+          if [ -d Signalizer.component/Contents/Resources ]; then
+            cp -R Signalizer.component/Contents/Resources "$AU/Contents/Resources" 2>/dev/null || true
+            cp -R Signalizer.component/Contents/Resources "$VST3/Contents/Resources"
+          fi
+
+          # ad-hoc sign both
+          codesign --force --deep --sign - "$AU"   || echo "AU codesign failed (non-fatal)"
+          codesign --force --deep --sign - "$VST3" || echo "VST3 codesign failed (non-fatal)"
+          ls -laR pkg_root | head -n 40
+
+      - name: Build .pkg installer (AU + VST3)
         run: |
           set -euxo pipefail
           cd "$GITHUB_WORKSPACE/build_out"
-          rm -rf pkg_root && mkdir -p pkg_root
-          cp -R "ETM Signalizer.component" pkg_root/
           pkgbuild --root pkg_root \
-            --install-location "/Library/Audio/Plug-Ins/Components" \
-            --identifier com.etm.signalizer.au \
+            --install-location "/" \
+            --identifier com.etm.signalizer.macos \
             --version 0.4.3 \
-            "ETM-Signalizer-AU-macOS-Installer.pkg"
+            "ETM-Signalizer-macOS-Installer.pkg"
           ls -la *.pkg
 
-      - name: Upload AU component
+      - name: Upload macOS installer (AU + VST3)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ETM-Signalizer-AU
-          path: ${{ github.workspace }}/build_out/*.component
-          if-no-files-found: warn
-
-      - name: Upload AU installer
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ETM-Signalizer-AU-Installer
+          name: ETM-Signalizer-macOS-Installer
           path: ${{ github.workspace }}/build_out/*.pkg
           if-no-files-found: warn
 
