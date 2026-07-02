@@ -504,25 +504,31 @@ namespace Signalizer
 						cycleEval.startFrom(-cycleBufferOffset, -cycleBufferOffset);
 
 						std::vector<float> wave(static_cast<std::size_t>(N));
-						float peak = 0.0f;
 						for (cpl::ssize_t i = 0; i < N; ++i)
-						{
-							const float s = static_cast<float>(cycleEval.evaluateSampleInc());
-							wave[static_cast<std::size_t>(i)] = s;
-							peak = std::max(peak, std::abs(s));
-						}
+							wave[static_cast<std::size_t>(i)] = static_cast<float>(cycleEval.evaluateSampleInc());
 
-						// amplitude floor: ignore near-silent cycles (so noise in the tail does not create
-						// false readings), but stay low enough that the kick's loud transient click does
-						// not hide the quieter body cycles.
-						const float floor = std::max(1e-4f, peak * 0.01f);
-						const float hysteresis = peak * 0.15f;   // signal must swing this far negative before the next rising crossing counts (rejects noise/harmonic re-crossings near zero that would otherwise read as half cycles)
+						// Local amplitude envelope (instant attack, slow release). The detection thresholds
+						// below are taken relative to THIS local level, not the global peak, so as a kick/sub
+						// decays the thresholds fall with it and the quieter tail cycles keep being detected
+						// and labelled (a single global threshold set by the loud transient would hide them).
+						std::vector<float> env(static_cast<std::size_t>(N));
+						{
+							float e = 0.0f;
+							const float release = 0.9997f;
+							for (cpl::ssize_t i = 0; i < N; ++i)
+							{
+								const float a = std::abs(wave[static_cast<std::size_t>(i)]);
+								e = a > e ? a : e * release;
+								env[static_cast<std::size_t>(i)] = e;
+							}
+						}
 						const double sr = state.sampleRate;
 						cpl::ssize_t lastCross = -1;
 						bool armed = false;
 
 						for (cpl::ssize_t i = 1; i < N && cycleMarks.size() < 4096; ++i)
 						{
+							const float hysteresis = env[static_cast<std::size_t>(i - 1)] * 0.15f;
 							if (wave[static_cast<std::size_t>(i - 1)] < -hysteresis)
 								armed = true;
 
@@ -539,6 +545,7 @@ namespace Signalizer
 										for (cpl::ssize_t k = lastCross; k < i; ++k)
 											cyclePeak = std::max(cyclePeak, std::abs(wave[static_cast<std::size_t>(k)]));
 
+										const float floor = std::max(1e-4f, env[static_cast<std::size_t>(lastCross)] * 0.05f);
 										const double freq = sr / period;
 										if (cyclePeak >= floor && freq >= 10.0 && freq <= 5000.0)
 											cycleMarks.push_back({ static_cast<double>(lastCross), (static_cast<double>(lastCross) + i) * 0.5, freq, static_cast<double>(cyclePeak) });
