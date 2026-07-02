@@ -72,6 +72,7 @@ namespace Signalizer
 			, kchannelColouring(&parentValue.channelColouring.param)
 			, kcolourSmoothingTime(&parentValue.colourSmoothing)
 			, kcursorTracker(&parentValue.cursorTracker)
+			, kShowFrequencies(&parentValue.showFrequencies)
 			, kwidgetColour(&parentValue.widgetColour)
 			, kfreqColourBlend(&parentValue.frequencyColouringBlend)
 			, ktriggerHysteresis(&parentValue.triggerHysteresis)
@@ -180,6 +181,8 @@ namespace Signalizer
 			koverlayChannels.setToggleable(true);
 			kcursorTracker.bSetTitle("Cursor tracker");
 			kcursorTracker.setToggleable(true);
+			kShowFrequencies.bSetTitle("Show frequencies");
+			kShowFrequencies.setToggleable(true);
 			kshowLegend.bSetTitle("Show legend");
 			kshowLegend.setToggleable(true);
 
@@ -213,6 +216,7 @@ namespace Signalizer
 			koverlayChannels.bSetDescription("Toggle to paint multiple channels on top of each other, otherwise they are painted in separate views");
 			kcolourSmoothingTime.bSetDescription("Smooths the colour variation over the period of time");
 			kcursorTracker.bSetDescription("Enable to create a tracker at the cursor displaying (x,y) values");
+			kShowFrequencies.bSetDescription("Show the frequency and note labels on each wave cycle. Turn off to keep the visual clean on a full mix.");
 			kwidgetColour.bSetDescription("Colour of widgets on the screen (like legends and trackers)");
 			ktriggerHysteresis.bSetDescription("The hysteresis of the triggering function defines an opaque measure of how resistant the trigger is to change");
 			ktriggerThreshold.bSetDescription("The triggering function will not consider any candidates below the threshold");
@@ -228,6 +232,7 @@ namespace Signalizer
 				{
 					section->addControl(&koverlayChannels, 0);
 					section->addControl(&kcursorTracker, 1);
+					section->addControl(&kShowFrequencies, 2);
 					//section->addControl(&kshowLegend, 2);
 					page->addSection(section, "Options");
 				}
@@ -444,7 +449,7 @@ namespace Signalizer
 			}
 		}
 
-		cpl::CButton kantiAlias, kdiagnostics, kdotSamples, ktriggerOnCustomFrequency, koverlayChannels, kcursorTracker, kshowLegend;
+		cpl::CButton kantiAlias, kdiagnostics, kdotSamples, ktriggerOnCustomFrequency, koverlayChannels, kcursorTracker, kShowFrequencies, kshowLegend;
 		cpl::CValueInputControl kcustomFrequency;
 		cpl::CValueKnobSlider
 			kwindow, kgain, kprimitiveSize, kenvelopeSmooth, kpctForDivision, ktriggerPhaseOffset, kcolourSmoothingTime, kfreqColourBlend,

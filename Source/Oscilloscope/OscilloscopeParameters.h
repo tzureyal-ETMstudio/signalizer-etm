@@ -398,6 +398,7 @@
 				, channelColouring("Colouring")
 				, colourSmoothing("ColSmooth", colourSmoothRange, msFormatter)
 				, cursorTracker("CursorTrck", unityRange, boolFormatter)
+				, showFrequencies("ShowFreq", unityRange, boolFormatter)
 				, showLegend("Show legend", boolRange, boolFormatter)
 				, frequencyColouringBlend("FColBlend", unityRange, pctFormatter)
 				, triggerHysteresis("TrgHstrs", unityRange, pctFormatter)
@@ -453,6 +454,7 @@
 					&channelColouring.param,
 					&colourSmoothing,
 					&cursorTracker,
+					&showFrequencies,
 					&frequencyColouringBlend,
 					&triggerHysteresis,
 					&triggerThreshold,
@@ -483,6 +485,7 @@
 				// latencyOffset is intentionally not serialized (kept out to preserve preset
 				// compatibility), so force its initial value to 0 (no offset) on a fresh insert.
 				latencyOffset.setTransformedValue(0);
+				showFrequencies.setTransformedValue(1);
 				postParameterInitialization();
 				timeMode.param.getParameterView().addListener(this);
 			}
@@ -702,6 +705,7 @@
 				overlayChannels,
 				colourSmoothing,
 				cursorTracker,
+				showFrequencies,
 				frequencyColouringBlend,
 				triggerHysteresis,
 				triggerThreshold,

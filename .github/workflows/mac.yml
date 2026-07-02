@@ -82,16 +82,14 @@ jobs:
           AU="pkg_root/Library/Audio/Plug-Ins/Components/ETM Signalizer.component"
           cp -R Signalizer.component "$AU"
 
-          # VST3: repackage the same binary as a .vst3 bundle
+          # VST3: copy the WHOLE working bundle (identical structure + Resources) and just
+          # swap the Info.plist to the VST3 one. This is far more robust than assembling the
+          # .vst3 from scratch (which produced a bundle some Mac DAWs would not load).
           VST3="pkg_root/Library/Audio/Plug-Ins/VST3/ETM Signalizer.vst3"
-          mkdir -p "$VST3/Contents/MacOS"
-          cp "$BIN" "$VST3/Contents/MacOS/Signalizer"
+          cp -R Signalizer.component "$VST3"
           cp "$GITHUB_WORKSPACE/Builds/MacOSX/vst3_Info.plist" "$VST3/Contents/Info.plist"
           printf 'BNDL????' > "$VST3/Contents/PkgInfo"
-          if [ -d Signalizer.component/Contents/Resources ]; then
-            cp -R Signalizer.component/Contents/Resources "$AU/Contents/Resources" 2>/dev/null || true
-            cp -R Signalizer.component/Contents/Resources "$VST3/Contents/Resources"
-          fi
+          rm -rf "$VST3/Contents/_CodeSignature"
 
           # ad-hoc sign both
           codesign --force --deep --sign - "$AU"   || echo "AU codesign failed (non-fatal)"

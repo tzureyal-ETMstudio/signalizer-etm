@@ -114,7 +114,7 @@
 			// contains frame-updated non-atomic structures
 			struct StateOptions
 			{
-				bool antialias, diagnostics, dotSamples, customTrigger, colourChannelsByFrequency, drawCursorTracker, drawLegend;
+				bool antialias, diagnostics, dotSamples, customTrigger, colourChannelsByFrequency, drawCursorTracker, drawLegend, showFrequencies;
 				float primitiveSize;
 
 				OscilloscopeContent::TriggeringMode triggerMode;

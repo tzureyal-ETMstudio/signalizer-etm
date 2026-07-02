@@ -255,6 +255,10 @@ namespace Signalizer
 			const juce::Colour labelColour = state.colourWidget;
 			const double sr = state.sampleRate;
 
+			// the frequency display (ticks + bands + Hz/note labels) is toggled by the
+			// "Show frequencies" button; the dB-on-hover below stays available regardless.
+			if (state.showFrequencies)
+			{
 			// 1) faint short tick at every cycle boundary so all cycles stay subtly visible
 			g.setColour(labelColour.withAlpha(0.28f));
 			for (const auto& mark : cycleMarks)
@@ -309,6 +313,7 @@ namespace Signalizer
 				g.setColour(labelColour);
 				g.drawFittedText(label, r, juce::Justification::centred, 2);
 			}
+			} // end "Show frequencies" toggle
 
 			// 3) on hover: a small tooltip showing the peak level (dBFS) of the
 			//    cycle directly under the cursor. Kept off until hovered so the

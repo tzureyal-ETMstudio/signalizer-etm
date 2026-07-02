@@ -251,6 +251,7 @@ namespace Signalizer
 		state.customTriggerFrequency = content->customTriggerFrequency.getTransformedValue();
 		state.colourChannelsByFrequency = content->channelColouring.param.getAsTEnum<OscilloscopeContent::ColourMode>() == OscilloscopeContent::ColourMode::SpectralEnergy;
 		state.drawCursorTracker = content->cursorTracker.parameter.getValue() > 0.5;
+		state.showFrequencies = content->showFrequencies.parameter.getValue() > 0.5;
 		state.colourBackground = content->backgroundColour.getAsJuceColour();
 		state.colourAxis = content->graphColour.getAsJuceColour();
 		state.colourWidget = content->widgetColour.getAsJuceColour();
